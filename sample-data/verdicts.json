@@ -1,0 +1,281 @@
+[
+  {
+    "id": "verdict-001",
+    "decision_id": "decision-2024-001",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "agent_id": "recruiter-agent-001",
+    "action": "candidate_evaluation",
+    "classification": "GREEN",
+    "confidence_score": 0.92,
+    "reasoning": [
+      "Strong technical skills match (85% requirement coverage)",
+      "Relevant 4-year experience in software development",
+      "High trust score for evaluation agent (0.94)",
+      "No bias indicators detected",
+      "Low-risk recruitment decision"
+    ],
+    "recommendations": [
+      "Proceed with standard interview process",
+      "Schedule technical assessment within 1 week"
+    ],
+    "required_actions": [
+      "Send interview invitation",
+      "Prepare candidate profile for review team"
+    ],
+    "audit_trail": {
+      "evaluation_steps": [
+        "Resume parsing completed",
+        "Skills assessment performed",
+        "Experience validation successful",
+        "Bias check passed"
+      ],
+      "data_sources": [
+        "candidate_resume.pdf",
+        "job_requirements.json",
+        "agent_performance_metrics"
+      ],
+      "processing_time_ms": 2450
+    }
+  },
+  {
+    "id": "verdict-002",
+    "decision_id": "decision-2024-002",
+    "timestamp": "2024-01-15T11:15:00Z",
+    "agent_id": "recruiter-agent-001",
+    "action": "candidate_evaluation",
+    "classification": "AMBER",
+    "confidence_score": 0.78,
+    "reasoning": [
+      "Moderate skills match (68% requirement coverage)",
+      "Some experience gaps in required technologies",
+      "Agent trust score acceptable (0.82)",
+      "Minor concerns about team fit indicators",
+      "Medium-risk decision requiring human review"
+    ],
+    "recommendations": [
+      "Conduct human review of candidate profile",
+      "Consider skills assessment before full interview",
+      "Evaluate transferrable skills potential"
+    ],
+    "required_actions": [
+      "Flag for human reviewer attention",
+      "Schedule preliminary technical screening",
+      "Gather additional reference information"
+    ],
+    "audit_trail": {
+      "evaluation_steps": [
+        "Resume parsing completed",
+        "Skills gap analysis performed",
+        "Experience validation with concerns",
+        "Cultural fit assessment flagged"
+      ],
+      "data_sources": [
+        "candidate_resume.pdf",
+        "job_requirements.json",
+        "cultural_fit_indicators.json"
+      ],
+      "processing_time_ms": 3200
+    }
+  },
+  {
+    "id": "verdict-003",
+    "decision_id": "decision-2024-003",
+    "timestamp": "2024-01-15T14:20:00Z",
+    "agent_id": "playwright-agent-001",
+    "action": "web_automation",
+    "classification": "GREEN",
+    "confidence_score": 0.89,
+    "reasoning": [
+      "Low-risk web navigation task",
+      "Read-only data extraction operation",
+      "High agent trust score (0.91)",
+      "No sensitive data handling",
+      "Standard automation procedure"
+    ],
+    "recommendations": [
+      "Proceed with automated execution",
+      "Monitor for any navigation issues"
+    ],
+    "required_actions": [
+      "Execute web scraping task",
+      "Log extracted data securely"
+    ],
+    "audit_trail": {
+      "evaluation_steps": [
+        "Action type classification",
+        "Risk assessment completed",
+        "Agent trust verification",
+        "Compliance check passed"
+      ],
+      "data_sources": [
+        "automation_request.json",
+        "agent_performance_metrics",
+        "security_policies.json"
+      ],
+      "processing_time_ms": 890
+    }
+  },
+  {
+    "id": "verdict-004",
+    "decision_id": "decision-2024-004",
+    "timestamp": "2024-01-16T09:45:00Z",
+    "agent_id": "evaluation-agent-001",
+    "action": "cultural_fit_assessment",
+    "classification": "RED",
+    "confidence_score": 0.95,
+    "reasoning": [
+      "High-risk cultural assessment task",
+      "Potential for unconscious bias in evaluation",
+      "Agent trust score below threshold (0.73)",
+      "Recent bias detection in similar assessments",
+      "Critical ethical concerns require blocking"
+    ],
+    "recommendations": [
+      "Block automated cultural fit assessment",
+      "Implement human-only review process",
+      "Review agent performance and retraining needs",
+      "Update bias detection algorithms"
+    ],
+    "required_actions": [
+      "Prevent assessment execution",
+      "Notify human review team",
+      "Log bias concern for investigation",
+      "Trigger agent performance review"
+    ],
+    "audit_trail": {
+      "evaluation_steps": [
+        "Bias risk assessment",
+        "Agent performance check",
+        "Ethical compliance evaluation",
+        "Decision override triggered"
+      ],
+      "data_sources": [
+        "cultural_assessment_request.json",
+        "bias_detection_logs",
+        "agent_trust_metrics",
+        "ethical_guidelines.json"
+      ],
+      "processing_time_ms": 1850
+    }
+  },
+  {
+    "id": "verdict-005",
+    "decision_id": "decision-2024-005",
+    "timestamp": "2024-01-16T16:30:00Z",
+    "agent_id": "trust-score-agent-001",
+    "action": "agent_performance_update",
+    "classification": "GREEN",
+    "confidence_score": 0.96,
+    "reasoning": [
+      "Low-risk internal trust score update",
+      "Automated performance calculation",
+      "High agent trust score (0.95)",
+      "Standard maintenance operation",
+      "No external impact"
+    ],
+    "recommendations": [
+      "Proceed with trust score updates",
+      "Monitor for performance trends"
+    ],
+    "required_actions": [
+      "Update agent trust scores",
+      "Log performance metrics",
+      "Trigger retraining if needed"
+    ],
+    "audit_trail": {
+      "evaluation_steps": [
+        "Performance data collection",
+        "Trust score calculation",
+        "Threshold validation",
+        "Update authorization"
+      ],
+      "data_sources": [
+        "agent_performance_logs",
+        "historical_decision_data",
+        "trust_score_algorithms"
+      ],
+      "processing_time_ms": 1200
+    }
+  },
+  {
+    "id": "verdict-006",
+    "decision_id": "decision-2024-006",
+    "timestamp": "2024-01-17T11:00:00Z",
+    "agent_id": "chain-custody-agent-001",
+    "action": "audit_log_generation",
+    "classification": "GREEN",
+    "confidence_score": 0.98,
+    "reasoning": [
+      "Essential audit trail maintenance",
+      "Cryptographically secure logging",
+      "Perfect agent trust score (0.99)",
+      "Critical for compliance and security",
+      "Automated integrity verification"
+    ],
+    "recommendations": [
+      "Maintain comprehensive audit logging",
+      "Regular integrity verification"
+    ],
+    "required_actions": [
+      "Generate audit log entries",
+      "Verify chain of custody integrity",
+      "Archive logs securely"
+    ],
+    "audit_trail": {
+      "evaluation_steps": [
+        "Log data validation",
+        "Cryptographic signing",
+        "Integrity verification",
+        "Storage authorization"
+      ],
+      "data_sources": [
+        "decision_logs.json",
+        "cryptographic_keys",
+        "audit_policies.json"
+      ],
+      "processing_time_ms": 450
+    }
+  },
+  {
+    "id": "verdict-007",
+    "decision_id": "decision-2024-007",
+    "timestamp": "2024-01-17T14:15:00Z",
+    "agent_id": "self-correction-agent-001",
+    "action": "model_retraining_trigger",
+    "classification": "AMBER",
+    "confidence_score": 0.82,
+    "reasoning": [
+      "Moderate-risk model update operation",
+      "Potential impact on system performance",
+      "Agent trust score acceptable (0.85)",
+      "Recent accuracy improvements noted",
+      "Human oversight recommended for safety"
+    ],
+    "recommendations": [
+      "Review retraining data quality",
+      "Monitor model performance post-update",
+      "Prepare rollback procedures",
+      "Validate improvement metrics"
+    ],
+    "required_actions": [
+      "Conduct human review of retraining plan",
+      "Execute retraining in staging environment",
+      "A/B test model performance",
+      "Deploy with monitoring and rollback capability"
+    ],
+    "audit_trail": {
+      "evaluation_steps": [
+        "Retraining trigger analysis",
+        "Data quality assessment",
+        "Performance prediction",
+        "Risk evaluation"
+      ],
+      "data_sources": [
+        "model_performance_metrics",
+        "retraining_datasets",
+        "accuracy_improvement_projections"
+      ],
+      "processing_time_ms": 2800
+    }
+  }
+]

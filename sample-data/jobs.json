@@ -1,0 +1,127 @@
+[
+  {
+    "id": "job-001",
+    "title": "Senior Software Engineer",
+    "company": "TechCorp Inc.",
+    "location": "San Francisco, CA",
+    "type": "Full-time",
+    "salary_range": "$120,000 - $160,000",
+    "description": "We are seeking a Senior Software Engineer to join our dynamic team. You will be responsible for designing, developing, and maintaining scalable web applications using modern technologies.",
+    "requirements": [
+      "5+ years of experience in software development",
+      "Strong proficiency in JavaScript/TypeScript",
+      "Experience with React, Node.js, and cloud platforms (AWS/GCP)",
+      "Knowledge of microservices architecture",
+      "Excellent problem-solving and communication skills"
+    ],
+    "preferred_skills": [
+      "Experience with Kubernetes and Docker",
+      "Knowledge of machine learning frameworks",
+      "Background in fintech or healthcare",
+      "Open source contributions"
+    ],
+    "posted_date": "2024-01-15",
+    "application_deadline": "2024-02-15",
+    "status": "active"
+  },
+  {
+    "id": "job-002",
+    "title": "AI Governance Specialist",
+    "company": "AI Ethics Corp",
+    "location": "New York, NY",
+    "type": "Full-time",
+    "salary_range": "$100,000 - $130,000",
+    "description": "Join our team as an AI Governance Specialist to help establish ethical AI practices and ensure responsible AI deployment across our organization.",
+    "requirements": [
+      "3+ years in AI/ML or related field",
+      "Understanding of AI ethics and governance frameworks",
+      "Experience with regulatory compliance (GDPR, CCPA)",
+      "Strong analytical and communication skills",
+      "Background in computer science or related discipline"
+    ],
+    "preferred_skills": [
+      "Knowledge of AI safety research",
+      "Experience with model auditing tools",
+      "Understanding of bias detection and mitigation",
+      "Familiarity with AI governance standards"
+    ],
+    "posted_date": "2024-01-20",
+    "application_deadline": "2024-02-20",
+    "status": "active"
+  },
+  {
+    "id": "job-003",
+    "title": "DevOps Engineer",
+    "company": "CloudTech Solutions",
+    "location": "Austin, TX",
+    "type": "Full-time",
+    "salary_range": "$90,000 - $120,000",
+    "description": "We are looking for a skilled DevOps Engineer to help us build and maintain our cloud infrastructure and CI/CD pipelines.",
+    "requirements": [
+      "4+ years of DevOps or SRE experience",
+      "Strong knowledge of AWS/Azure/GCP",
+      "Experience with Kubernetes and Docker",
+      "Proficiency in Infrastructure as Code (Terraform/CloudFormation)",
+      "Scripting skills (Python, Bash)"
+    ],
+    "preferred_skills": [
+      "Experience with monitoring tools (Prometheus, Grafana)",
+      "Knowledge of security best practices",
+      "Background in high-availability systems",
+      "Certifications (AWS, Kubernetes)"
+    ],
+    "posted_date": "2024-01-25",
+    "application_deadline": "2024-02-25",
+    "status": "active"
+  },
+  {
+    "id": "job-004",
+    "title": "Data Scientist",
+    "company": "DataDriven Analytics",
+    "location": "Boston, MA",
+    "type": "Full-time",
+    "salary_range": "$110,000 - $140,000",
+    "description": "Join our data science team to develop machine learning models and extract insights from complex datasets.",
+    "requirements": [
+      "PhD or Master's in Data Science, Statistics, or related field",
+      "5+ years of experience in data science/ML",
+      "Proficiency in Python, R, and SQL",
+      "Experience with ML frameworks (TensorFlow, PyTorch, scikit-learn)",
+      "Strong statistical analysis skills"
+    ],
+    "preferred_skills": [
+      "Experience with big data technologies (Spark, Hadoop)",
+      "Knowledge of deep learning techniques",
+      "Background in A/B testing and experimentation",
+      "Publication record in ML conferences"
+    ],
+    "posted_date": "2024-01-30",
+    "application_deadline": "2024-03-01",
+    "status": "active"
+  },
+  {
+    "id": "job-005",
+    "title": "Product Manager",
+    "company": "InnovateNow",
+    "location": "Seattle, WA",
+    "type": "Full-time",
+    "salary_range": "$130,000 - $170,000",
+    "description": "We are seeking an experienced Product Manager to lead product strategy and drive the development of our AI-powered platform.",
+    "requirements": [
+      "5+ years of product management experience",
+      "Experience in B2B SaaS products",
+      "Strong analytical and data-driven decision making",
+      "Excellent communication and leadership skills",
+      "Technical background preferred"
+    ],
+    "preferred_skills": [
+      "Experience with AI/ML products",
+      "Knowledge of agile development methodologies",
+      "Background in enterprise software",
+      "MBA or equivalent advanced degree"
+    ],
+    "posted_date": "2024-02-01",
+    "application_deadline": "2024-03-01",
+    "status": "active"
+  }
+]

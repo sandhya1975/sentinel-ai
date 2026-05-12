@@ -1,6 +1,17 @@
-# SENTINEL AI Agents
+# SESSION MEMORY RULE
 
-This document outlines the specialized AI agents that comprise the SENTINEL governance ecosystem. Each agent is designed with specific capabilities and operates within defined boundaries to ensure safe and effective AI decision-making.
+Before giving any build instructions, read PROJECT-BRAIN.md first.
+
+PROJECT-BRAIN.md is the source of truth for:
+- current sprint
+- completed systems
+- architecture state
+- governance modules
+- active roadmap
+
+Never restart SENTINEL from scratch.
+Never rebuild already-working systems.
+Always continue from latest project state.mprise the SENTINEL governance ecosystem. Each agent is designed with specific capabilities and operates within defined boundaries to ensure safe and effective AI decision-making.
 
 ## Core Agents
 

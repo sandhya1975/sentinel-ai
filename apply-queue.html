@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL — Apply Queue</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --green: #00ff88;
+    --amber: #ffb800;
+    --red: #ff3b5c;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #6c63ff;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+
+  .logo span { color: var(--muted); }
+
+  .header-stats {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .stat-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* Filters */
+  .filters {
+    padding: 16px 20px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  /* Summary bar */
+  .summary-bar {
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .summary-bar strong { color: var(--text); }
+
+  /* Job cards */
+  .job-list {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .job-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .job-card:hover { border-color: var(--accent); }
+
+  .job-card-header {
+    padding: 14px 16px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .job-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .job-company {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .score-badge {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score-badge .score-label {
+    font-size: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    margin-top: 2px;
+    opacity: 0.8;
+  }
+
+  .score-green { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+  .score-amber { background: rgba(255,184,0,0.15); color: var(--amber); border: 1px solid rgba(255,184,0,0.3); }
+  .score-red { background: rgba(255,59,92,0.15); color: var(--red); border: 1px solid rgba(255,59,92,0.3); }
+
+  .job-meta {
+    padding: 0 16px 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .meta-tag {
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .apply-type-tag {
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .type-auto { background: rgba(0,255,136,0.1); color: var(--green); }
+  .type-manual { background: rgba(108,99,255,0.15); color: #a09bff; }
+  .type-tap { background: rgba(255,184,0,0.1); color: var(--amber); }
+
+  .status-bar {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .status-indicator {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .status-pending { background: rgba(108,99,255,0.15); color: #a09bff; }
+  .status-applied { background: rgba(0,255,136,0.1); color: var(--green); }
+  .status-skipped { background: rgba(107,107,128,0.2); color: var(--muted); }
+
+  .action-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+  }
+
+  .btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .btn-open {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-open:hover { background: #7c74ff; }
+
+  .btn-skip {
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-skip:hover { color: var(--red); border-color: var(--red); }
+
+  .btn-applied {
+    background: rgba(0,255,136,0.1);
+    color: var(--green);
+    border: 1px solid rgba(0,255,136,0.2);
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty h3 { font-size: 16px; color: var(--text); margin-bottom: 6px; }
+  .empty p { font-size: 13px; }
+
+  /* Telegram button */
+  .telegram-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .telegram-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(108,99,255,0.5); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">SENTINEL <span>/ QUEUE</span></div>
+  <div class="header-stats">
+    <div class="stat-pill">
+      <div class="dot" style="background:var(--green)"></div>
+      <span id="ready-count">12 ready</span>
+    </div>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterJobs('all', this)">All</button>
+  <button class="filter-btn" onclick="filterJobs('pending', this)">Pending</button>
+  <button class="filter-btn" onclick="filterJobs('applied', this)">Applied</button>
+  <button class="filter-btn" onclick="filterJobs('auto', this)">Auto-apply</button>
+  <button class="filter-btn" onclick="filterJobs('tap', this)">Needs tap</button>
+  <button class="filter-btn" onclick="filterJobs('skipped', this)">Skipped</button>
+</div>
+
+<div class="summary-bar">
+  <span><strong id="showing-count">12</strong> jobs in queue</span>
+  <span id="applied-summary" style="color:var(--green)">4 applied today</span>
+</div>
+
+<div class="job-list" id="job-list"></div>
+
+<button class="telegram-btn" onclick="sendTelegramSummary()">
+  ✈️ Send Telegram Summary
+</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const jobs = [
+  { id:1, title:"Head of AI & Automation", company:"MyDentist", score:92, salary:"£90–110k", location:"Remote, UK", applyType:"auto", status:"applied", url:"https://mydentist.co.uk/careers" },
+  { id:2, title:"AI Product Manager", company:"Lloyds Banking Group", score:88, salary:"£75–95k", location:"London", applyType:"auto", status:"applied", url:"https://lloydsbankinggroup.com/careers" },
+  { id:3, title:"Senior AI Engineer", company:"Confidential", score:85, salary:"£80–100k", location:"Manchester", applyType:"auto", status:"pending", url:"https://totaljobs.com/job/12345" },
+  { id:4, title:"AI Governance Lead", company:"NHS England", score:83, salary:"£70–85k", location:"Leeds / Remote", applyType:"tap", status:"pending", url:"https://linkedin.com/jobs/12345" },
+  { id:5, title:"Machine Learning Engineer", company:"Babylon Health", score:79, salary:"£85–105k", location:"London", applyType:"auto", status:"pending", url:"https://reed.co.uk/jobs/12345" },
+  { id:6, title:"Data Science Manager", company:"Sky", score:76, salary:"£75–90k", location:"Osterley", applyType:"tap", status:"pending", url:"https://linkedin.com/jobs/67890" },
+  { id:7, title:"AI Solutions Architect", company:"Accenture", score:74, salary:"£80–100k", location:"UK Wide", applyType:"auto", status:"pending", url:"https://cwjobs.co.uk/jobs/12345" },
+  { id:8, title:"Digital Transformation Lead", company:"HSBC", score:71, salary:"£70–85k", location:"Canary Wharf", applyType:"auto", status:"applied", url:"https://totaljobs.com/job/98765" },
+  { id:9, title:"AI Product Owner", company:"Vodafone", score:70, salary:"£65–80k", location:"Newbury / Remote", applyType:"tap", status:"pending", url:"https://linkedin.com/jobs/54321" },
+  { id:10, title:"Senior Data Analyst", company:"Experian", score:68, salary:"£55–70k", location:"Nottingham", applyType:"auto", status:"skipped", url:"https://reed.co.uk/jobs/54321" },
+  { id:11, title:"Technology Director", company:"Capita", score:65, salary:"£90–120k", location:"London", applyType:"auto", status:"pending", url:"https://cvlibrary.co.uk/jobs/12345" },
+  { id:12, title:"AI Delivery Manager", company:"Serco", score:62, salary:"£60–75k", location:"Hook, Hampshire", applyType:"auto", status:"pending", url:"https://totaljobs.com/job/11111" },
+];
+
+let currentFilter = 'all';
+
+function getScoreClass(score) {
+  if (score >= 80) return 'score-green';
+  if (score >= 70) return 'score-amber';
+  return 'score-red';
+}
+
+function getApplyTypeLabel(type) {
+  if (type === 'auto') return '<span class="apply-type-tag type-auto">⚡ Auto-apply</span>';
+  if (type === 'tap') return '<span class="apply-type-tag type-tap">👆 Needs tap</span>';
+  return '<span class="apply-type-tag type-manual">Manual</span>';
+}
+
+function getStatusLabel(status) {
+  if (status === 'applied') return '<span class="status-indicator status-applied">✓ Applied</span>';
+  if (status === 'skipped') return '<span class="status-indicator status-skipped">— Skipped</span>';
+  return '<span class="status-indicator status-pending">⏳ Pending</span>';
+}
+
+function renderJobs(filter) {
+  const list = document.getElementById('job-list');
+  const filtered = filter === 'all' ? jobs :
+    filter === 'pending' ? jobs.filter(j => j.status === 'pending') :
+    filter === 'applied' ? jobs.filter(j => j.status === 'applied') :
+    filter === 'auto' ? jobs.filter(j => j.applyType === 'auto') :
+    filter === 'tap' ? jobs.filter(j => j.applyType === 'tap') :
+    filter === 'skipped' ? jobs.filter(j => j.status === 'skipped') : jobs;
+
+  document.getElementById('showing-count').textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><h3>No jobs here</h3><p>Try a different filter</p></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(job => `
+    <div class="job-card" id="card-${job.id}">
+      <div class="job-card-header">
+        <div>
+          <div class="job-title">${job.title}</div>
+          <div class="job-company">${job.company}</div>
+        </div>
+        <div class="score-badge ${getScoreClass(job.score)}">
+          ${job.score}
+          <span class="score-label">SCORE</span>
+        </div>
+      </div>
+      <div class="job-meta">
+        <span class="meta-tag">💷 ${job.salary}</span>
+        <span class="meta-tag">📍 ${job.location}</span>
+        ${getApplyTypeLabel(job.applyType)}
+      </div>
+      <div class="status-bar">
+        ${getStatusLabel(job.status)}
+        <div class="action-buttons">
+          ${job.status !== 'skipped' ? `<button class="btn btn-skip" onclick="skipJob(${job.id})">Skip</button>` : ''}
+          ${job.status === 'pending' ? `<button class="btn btn-open" onclick="openJob('${job.url}', ${job.id})">Open Job ↗</button>` : ''}
+          ${job.status === 'applied' ? `<button class="btn btn-applied">✓ Applied</button>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterJobs(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderJobs(filter);
+}
+
+function openJob(url, id) {
+  window.open(url, '_blank');
+  // Mark as applied after opening
+  const job = jobs.find(j => j.id === id);
+  if (job && job.status === 'pending') {
+    job.status = 'applied';
+    renderJobs(currentFilter);
+    showToast('✓ Marked as applied');
+    updateStats();
+  }
+}
+
+function skipJob(id) {
+  const job = jobs.find(j => j.id === id);
+  if (job) {
+    job.status = 'skipped';
+    renderJobs(currentFilter);
+    showToast('Job skipped');
+    updateStats();
+  }
+}
+
+function updateStats() {
+  const pending = jobs.filter(j => j.status === 'pending').length;
+  const applied = jobs.filter(j => j.status === 'applied').length;
+  document.getElementById('ready-count').textContent = `${pending} ready`;
+  document.getElementById('applied-summary').textContent = `${applied} applied today`;
+}
+
+function sendTelegramSummary() {
+  const pending = jobs.filter(j => j.status === 'pending').length;
+  const applied = jobs.filter(j => j.status === 'applied').length;
+  const taps = jobs.filter(j => j.applyType === 'tap' && j.status === 'pending').length;
+  showToast(`📨 Sent: ${pending} ready, ${applied} applied, ${taps} need tap`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+renderJobs('all');
+updateStats();
+</script>
+</body>
+</html>

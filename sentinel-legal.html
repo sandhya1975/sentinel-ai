@@ -1,0 +1,716 @@
+
+
+cat /mnt/user-data/outputs/sentinel-demo.html
+Output
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL Legal — AI Citation Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #fafaf8;
+    --gray-100: #f0ede8;
+    --gray-300: #c8c4bc;
+    --gray-500: #8a8680;
+    --gray-700: #4a4744;
+    --red-bg: #fdf0ee;
+    --red-border: #e8a090;
+    --red-text: #8b2a1a;
+    --red-dot: #d94f35;
+    --amber-bg: #fdf6e8;
+    --amber-border: #e8c878;
+    --amber-text: #7a5a10;
+    --amber-dot: #d4a020;
+    --green-bg: #eef7f0;
+    --green-border: #88c898;
+    --green-text: #1a6b30;
+    --green-dot: #2e9e50;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--black);
+  }
+
+  .logo span {
+    color: var(--gray-500);
+    font-weight: 400;
+  }
+
+  .header-badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+    border: 1px solid var(--gray-300);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 5rem 2.5rem 3rem;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--gray-500);
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15;
+    color: var(--black);
+    margin-bottom: 1.25rem;
+    font-weight: 400;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--gray-700);
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 2.5rem;
+  }
+
+  /* STATS ROW */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--gray-300);
+    border: 1px solid var(--gray-300);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .stat {
+    background: var(--white);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--black);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--gray-500);
+    line-height: 1.4;
+  }
+
+  /* MAIN TOOL */
+  .tool-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 2.5rem 5rem;
+  }
+
+  .tool-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .paste-area {
+    width: 100%;
+    min-height: 160px;
+    padding: 1.25rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--black);
+    background: var(--gray-100);
+    border: 1.5px solid var(--gray-300);
+    border-radius: 10px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .paste-area:focus {
+    border-color: var(--black);
+    background: var(--white);
+  }
+
+  .paste-area::placeholder {
+    color: var(--gray-500);
+  }
+
+  .examples-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .example-btn {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--gray-300);
+    background: transparent;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+
+  .example-btn:hover {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+  }
+
+  .check-btn {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 14px;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* LOADING */
+  .loading {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 1.5rem 0;
+    color: var(--gray-500);
+    font-size: 13px;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--gray-300);
+    border-top-color: var(--black);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RESULT */
+  .result {
+    display: none;
+    margin-top: 1.5rem;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .verdict-banner {
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    border: 1.5px solid;
+  }
+
+  .verdict-banner.RED {
+    background: var(--red-bg);
+    border-color: var(--red-border);
+  }
+
+  .verdict-banner.AMBER {
+    background: var(--amber-bg);
+    border-color: var(--amber-border);
+  }
+
+  .verdict-banner.GREEN {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+  }
+
+  .verdict-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .verdict-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .RED .verdict-dot { background: var(--red-dot); }
+  .AMBER .verdict-dot { background: var(--amber-dot); }
+  .GREEN .verdict-dot { background: var(--green-dot); }
+
+  .verdict-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .RED .verdict-label { color: var(--red-text); }
+  .AMBER .verdict-label { color: var(--amber-text); }
+  .GREEN .verdict-label { color: var(--green-text); }
+
+  .verdict-score {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+
+  .verdict-reason {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .RED .verdict-reason { color: var(--red-text); }
+  .AMBER .verdict-reason { color: var(--amber-text); }
+  .GREEN .verdict-reason { color: var(--green-text); }
+
+  /* DETAIL CARDS */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .detail-card {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .detail-card-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--gray-500);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .detail-card-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--black);
+  }
+
+  /* PDF BUTTON */
+  .pdf-btn {
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    color: var(--black);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1.5px solid var(--black);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .pdf-btn:hover {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  /* EVIDENCE SECTION */
+  .evidence-section {
+    border-top: 1px solid var(--gray-100);
+    padding: 3rem 2.5rem;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .evidence-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .evidence-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .ev-card {
+    border: 1px solid var(--gray-300);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+
+  .ev-tag {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .ev-tag.uk { background: #eeedfe; color: #3c3489; }
+  .ev-tag.india { background: #e1f5ee; color: #085041; }
+  .ev-tag.usa { background: #faeeda; color: #633806; }
+  .ev-tag.world { background: #faece7; color: #712b13; }
+
+  .ev-text {
+    font-size: 12px;
+    color: var(--gray-700);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--gray-100);
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+
+  .footer-tagline {
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 1rem 1.25rem; }
+    .hero { padding: 3rem 1.25rem 2rem; }
+    .tool-wrap { padding: 0 1.25rem 3rem; }
+    .stats { grid-template-columns: 1fr; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .evidence-cards { grid-template-columns: 1fr; }
+    .evidence-section { padding: 2rem 1.25rem; }
+    footer { padding: 1rem 1.25rem; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SENTINEL <span>LEGAL</span></div>
+  <div class="header-badge">Weightmans — Demo</div>
+</header>
+
+<section class="hero">
+  <div class="hero-label">AI Citation Verification</div>
+  <h1>Does your AI-written legal text hold up?</h1>
+  <p>Paste any AI-generated legal document below. SENTINEL checks every case citation against real law reports and returns a RED, AMBER, or GREEN verdict in seconds.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">712</div>
+      <div class="stat-label">court cases worldwide hit by fake AI citations in 2025</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">90%</div>
+      <div class="stat-label">of those happened in 2025 alone</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">£15k</div>
+      <div class="stat-label">fines handed to lawyers for fake citations</div>
+    </div>
+  </div>
+</section>
+
+<div class="tool-wrap">
+  <div class="tool-label">Paste legal text to verify</div>
+
+  <textarea class="paste-area" id="inputText" placeholder="Paste your AI-generated legal text here. For example: 'The defendant had a duty of care — see Smith v Jones [2019] EWCA Civ 123. The court held that...'"></textarea>
+
+  <div class="examples-row">
+    <button class="example-btn" onclick="loadExample('fake')">Load fake citation example</button>
+    <button class="example-btn" onclick="loadExample('real')">Load real citation example</button>
+    <button class="example-btn" onclick="clearAll()">Clear</button>
+  </div>
+
+  <button class="check-btn" id="checkBtn" onclick="runCheck()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    Check with SENTINEL
+  </button>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>SENTINEL is analysing your text...</span>
+  </div>
+
+  <div class="result" id="result">
+    <div class="verdict-banner" id="verdictBanner">
+      <div class="verdict-top">
+        <div class="verdict-dot"></div>
+        <div class="verdict-label" id="verdictLabel"></div>
+        <div class="verdict-score" id="verdictScore"></div>
+      </div>
+      <div class="verdict-reason" id="verdictReason"></div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-label">Citation found</div>
+        <div class="detail-card-value" id="citationFound">—</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">BAILII status</div>
+        <div class="detail-card-value" id="bailiiStatus">—</div>
+      </div>
+    </div>
+
+    <button class="pdf-btn" onclick="downloadPDF()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Audit PDF
+    </button>
+  </div>
+</div>
+
+<div class="evidence-section">
+  <div class="evidence-label">Why this matters — verified evidence</div>
+  <div class="evidence-cards">
+    <div class="ev-card">
+      <span class="ev-tag uk">UK — 2025</span>
+      <p class="ev-text">"The High Court of England and Wales warned lawyers not to use AI-generated case material after a series of cases cited fictitious rulings." — Counsel Magazine</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-tag india">India — Delhi HC</span>
+      <p class="ev-text">"The Delhi High Court rebuked a lawyer who provided arguments based on fake AI-generated cases. Bengaluru ITAT withdrew a tax decision due to fake AI case laws." — Prime Legal</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-tag usa">USA — Oregon</span>
+      <p class="ev-text">"A US District Court fined an attorney $15,500 for citing fake cases and not being adequately candid about it." — Bloomberg Law, 2025</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-tag world">Global</span>
+      <p class="ev-text">"712 legal decisions worldwide involving hallucinated AI content — 90% of those happened in 2025 alone." — Damien Charlotin, HEC Paris</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SENTINEL LEGAL</div>
+  <div class="footer-tagline">Westlaw kept lawyers safe for 50 years. AI removed that overnight. SENTINEL puts it back.</div>
+</footer>
+
+<script>
+const WEBHOOK_URL = "https://primary-production-70e37.up.railway.app/webhook/dc80ba5b-8b22-4c9f-b837-b0a5391b3e49";
+
+const FAKE_EXAMPLE = "The tenant has a right to safe housing under the Landlord and Tenant Act 1985. See Sharma v Delhi Housing Board [2019] EWCA Civ 441 — the court ruled the landlord was fully liable for structural defects.";
+const REAL_EXAMPLE = "Employers have a non-delegable duty to provide safe working conditions for their employees. See Wilsons and Clyde Coal Co v English [1938] AC 57 — the House of Lords confirmed this duty cannot be delegated to a third party.";
+
+let lastResult = null;
+
+function loadExample(type) {
+  document.getElementById('inputText').value = type === 'fake' ? FAKE_EXAMPLE : REAL_EXAMPLE;
+  document.getElementById('result').style.display = 'none';
+}
+
+function clearAll() {
+  document.getElementById('inputText').value = '';
+  document.getElementById('result').style.display = 'none';
+}
+
+async function runCheck() {
+  const text = document.getElementById('inputText').value.trim();
+  if (!text) {
+    alert('Please paste some legal text first.');
+    return;
+  }
+
+  document.getElementById('checkBtn').disabled = true;
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('result').style.display = 'none';
+
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chatInput: text })
+    });
+
+    const data = await response.json();
+    lastResult = data;
+    showResult(data);
+  } catch (err) {
+    alert('Connection error. Please check your internet and try again.');
+  } finally {
+    document.getElementById('checkBtn').disabled = false;
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+
+function showResult(data) {
+  const verdict = data.verdict || 'AMBER';
+  const score = data.score || 0;
+  const reason = data.block_reason || getDefaultReason(verdict);
+  const citations = data.citations || [];
+  const bailiiVerified = data.bailii_verified || 'UNVERIFIED';
+
+  const banner = document.getElementById('verdictBanner');
+  banner.className = 'verdict-banner ' + verdict;
+
+  const verdictMessages = {
+    RED: 'RED — Hallucinated citation detected',
+    AMBER: 'AMBER — Requires human review',
+    GREEN: 'GREEN — Verified. Safe to submit.'
+  };
+
+  document.getElementById('verdictLabel').textContent = verdictMessages[verdict] || verdict;
+  document.getElementById('verdictScore').textContent = 'Score: ' + score + '/100';
+  document.getElementById('verdictReason').textContent = reason || getDefaultReason(verdict);
+
+  const citationText = citations.length > 0 ? citations[0].raw : 'None detected';
+  document.getElementById('citationFound').textContent = citationText;
+  document.getElementById('bailiiStatus').textContent = bailiiVerified;
+
+  document.getElementById('result').style.display = 'block';
+}
+
+function getDefaultReason(verdict) {
+  if (verdict === 'RED') return 'Citation could not be found in BAILII or any known law report. Do not submit.';
+  if (verdict === 'AMBER') return 'Citation could not be independently verified. Human review required before submission.';
+  return 'Citation verified. No hallucination risk detected.';
+}
+
+function downloadPDF() {
+  if (!lastResult) return;
+
+  const verdict = lastResult.verdict || 'UNKNOWN';
+  const score = lastResult.score || 0;
+  const reason = lastResult.block_reason || '';
+  const prompt = lastResult.original_prompt || '';
+  const citations = lastResult.citations || [];
+  const bailiiVerified = lastResult.bailii_verified || 'UNVERIFIED';
+  const now = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' });
+
+  const citationList = citations.map(c => `  • ${c.raw}\n    BAILII: ${c.bailii_url}`).join('\n') || '  None detected';
+
+  const content = `SENTINEL LEGAL — AUDIT REPORT
+${'='.repeat(50)}
+
+FIRM: Weightmans LLP
+DATE: ${now}
+VERDICT: ${verdict}
+SCORE: ${score}/100
+
+BLOCK REASON:
+${reason || 'None'}
+
+ORIGINAL TEXT CHECKED:
+${prompt}
+
+CITATIONS FOUND:
+${citationList}
+
+BAILII STATUS: ${bailiiVerified}
+
+RECOMMENDED ACTION:
+${verdict === 'RED' ? 'DO NOT SUBMIT — Fix citation before filing.' : verdict === 'AMBER' ? 'HUMAN REVIEW REQUIRED before submission.' : 'APPROVED — Safe to submit to court.'}
+
+${'='.repeat(50)}
+This audit report was generated by SENTINEL Legal.
+SENTINEL is an AI-powered citation verification system.
+This report serves as evidence of due diligence.
+${'='.repeat(50)}`;
+
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SENTINEL-Audit-${verdict}-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
+
+
+
+

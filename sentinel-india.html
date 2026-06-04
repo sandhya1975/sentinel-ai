@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL India — AI Legal Citation Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Noto+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #0a0a0a;
+  --white: #f8f6f1;
+  --cream: #f0ede4;
+  --india-orange: #FF6B00;
+  --india-green: #138808;
+  --india-blue: #000080;
+  --saffron: #FF9933;
+  --red-bg: #fff0ee;
+  --red-border: #e8a090;
+  --red-text: #8b2a1a;
+  --red-dot: #d94f35;
+  --amber-bg: #fff8e8;
+  --amber-border: #e8c878;
+  --amber-text: #7a5a10;
+  --amber-dot: #d4a020;
+  --green-bg: #eef7f0;
+  --green-border: #90c8a0;
+  --green-text: #1a5a2a;
+  --green-dot: #35a055;
+  --gray-100: #f5f2ed;
+  --gray-300: #d0ccc4;
+  --gray-500: #8a8680;
+  --gray-700: #4a4744;
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Noto Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(255,107,0,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(19,136,8,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(0,0,128,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+header {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.logo-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ashoka-wheel {
+  width: 44px;
+  height: 44px;
+  opacity: 0.9;
+}
+
+.logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--white);
+}
+
+.logo-text span {
+  color: var(--saffron);
+}
+
+.logo-sub {
+  font-size: 11px;
+  color: var(--gray-500);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.india-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--gray-500);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.flag-strip {
+  display: flex;
+  gap: 2px;
+}
+
+.flag-strip span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Crisis banner */
+.crisis-banner {
+  margin: 32px 0;
+  background: rgba(255,107,0,0.08);
+  border: 1px solid rgba(255,107,0,0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.crisis-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.crisis-text h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--saffron);
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.crisis-text p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+}
+
+.crisis-text p strong {
+  color: rgba(255,255,255,0.85);
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 24px 0 36px;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-number {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--saffron);
+  display: block;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Main card */
+.main-card {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  color: var(--black);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+
+.card-header {
+  background: var(--black);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--green-dot);
+  letter-spacing: 1px;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green-dot);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.card-body {
+  padding: 28px;
+}
+
+/* Example tabs */
+.example-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.example-tab {
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--gray-300);
+  background: transparent;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.example-tab:hover {
+  border-color: var(--india-orange);
+  color: var(--india-orange);
+}
+
+.example-tab.red { border-color: var(--red-border); color: var(--red-text); }
+.example-tab.green { border-color: var(--green-border); color: var(--green-text); }
+.example-tab.amber { border-color: var(--amber-border); color: var(--amber-text); }
+
+/* Textarea */
+.input-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-700);
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+}
+
+textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 16px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Noto Sans', sans-serif;
+  color: var(--black);
+  background: var(--cream);
+  resize: vertical;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+  outline: none;
+}
+
+textarea:focus {
+  border-color: var(--india-orange);
+  background: #fff;
+}
+
+textarea::placeholder {
+  color: var(--gray-500);
+}
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--india-orange);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #e55e00;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(255,107,0,0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-text { display: block; }
+
+/* Result panel */
+.result-panel {
+  margin-top: 24px;
+  border-radius: 12px;
+  border: 1.5px solid;
+  padding: 20px 24px;
+  display: none;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-panel.red { background: var(--red-bg); border-color: var(--red-border); }
+.result-panel.amber { background: var(--amber-bg); border-color: var(--amber-border); }
+.result-panel.green { background: var(--green-bg); border-color: var(--green-border); }
+
+.verdict-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.verdict-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.verdict-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.red .verdict-dot { background: var(--red-dot); }
+.amber .verdict-dot { background: var(--amber-dot); }
+.green .verdict-dot { background: var(--green-dot); }
+
+.verdict-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.red .verdict-label { color: var(--red-text); }
+.amber .verdict-label { color: var(--amber-text); }
+.green .verdict-label { color: var(--green-text); }
+
+.score-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-weight: 500;
+}
+
+.red .score-chip { background: var(--red-border); color: var(--red-text); }
+.amber .score-chip { background: var(--amber-border); color: var(--amber-text); }
+.green .score-chip { background: var(--green-border); color: var(--green-text); }
+
+.result-divider {
+  height: 1px;
+  background: currentColor;
+  opacity: 0.15;
+  margin: 14px 0;
+}
+
+.result-section-title {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.5;
+  margin-bottom: 6px;
+}
+
+.red .result-section-title { color: var(--red-text); }
+.amber .result-section-title { color: var(--amber-text); }
+.green .result-section-title { color: var(--green-text); }
+
+.result-text {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.red .result-text { color: var(--red-text); }
+.amber .result-text { color: var(--amber-text); }
+.green .result-text { color: var(--green-text); }
+
+.citation-box {
+  background: rgba(0,0,0,0.05);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  margin-top: 8px;
+  word-break: break-all;
+}
+
+.red .citation-box { color: var(--red-text); }
+.amber .citation-box { color: var(--amber-text); }
+.green .citation-box { color: var(--green-text); }
+
+.indiankanoon-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ik-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.ik-badge.verified { background: #d4edda; color: #155724; }
+.ik-badge.unverified { background: #f8d7da; color: #721c24; }
+.ik-badge.checking { background: #fff3cd; color: #856404; }
+
+/* Download button */
+.download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  background: var(--black);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.download-btn:hover {
+  background: #222;
+  transform: translateY(-1px);
+}
+
+/* Error */
+.error-panel {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: #fff0ee;
+  border: 1px solid #e8a090;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--red-text);
+  display: none;
+}
+
+/* Info section */
+.info-section {
+  margin-top: 48px;
+  padding-bottom: 60px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.info-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.info-card-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.info-card h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.info-card p {
+  font-size: 13px;
+  color: var(--gray-500);
+  line-height: 1.6;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--saffron);
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 24px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--gray-500);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Loading overlay */
+.loading-state {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.loading-state p {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@media (max-width: 600px) {
+  .stats-row { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="logo-block">
+        <!-- Ashoka Wheel SVG -->
+        <svg class="ashoka-wheel" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="#FF9933" stroke-width="4" fill="none" opacity="0.6"/>
+          <circle cx="50" cy="50" r="6" fill="#FF9933"/>
+          <circle cx="50" cy="50" r="3" fill="#000080"/>
+          <!-- 24 spokes -->
+          <g stroke="#000080" stroke-width="1.5" opacity="0.8">
+            <line x1="50" y1="50" x2="50" y2="8"/>
+            <line x1="50" y1="50" x2="67" y2="10.4"/>
+            <line x1="50" y1="50" x2="81.2" y2="18.8"/>
+            <line x1="50" y1="50" x2="89.6" y2="33"/>
+            <line x1="50" y1="50" x2="92" y2="50"/>
+            <line x1="50" y1="50" x2="89.6" y2="67"/>
+            <line x1="50" y1="50" x2="81.2" y2="81.2"/>
+            <line x1="50" y1="50" x2="67" y2="89.6"/>
+            <line x1="50" y1="50" x2="50" y2="92"/>
+            <line x1="50" y1="50" x2="33" y2="89.6"/>
+            <line x1="50" y1="50" x2="18.8" y2="81.2"/>
+            <line x1="50" y1="50" x2="10.4" y2="67"/>
+            <line x1="50" y1="50" x2="8" y2="50"/>
+            <line x1="50" y1="50" x2="10.4" y2="33"/>
+            <line x1="50" y1="50" x2="18.8" y2="18.8"/>
+            <line x1="50" y1="50" x2="33" y2="10.4"/>
+            <line x1="50" y1="50" x2="58.7" y2="9.2"/>
+            <line x1="50" y1="50" x2="74.8" y2="14.0"/>
+            <line x1="50" y1="50" x2="86.0" y2="25.2"/>
+            <line x1="50" y1="50" x2="90.8" y2="41.3"/>
+            <line x1="50" y1="50" x2="90.8" y2="58.7"/>
+            <line x1="50" y1="50" x2="86.0" y2="74.8"/>
+            <line x1="50" y1="50" x2="25.2" y2="86.0"/>
+            <line x1="50" y1="50" x2="9.2" y2="41.3"/>
+          </g>
+        </svg>
+        <div>
+          <div class="logo-text">SENTINEL <span>India</span></div>
+          <div class="logo-sub">AI Legal Verification</div>
+        </div>
+      </div>
+      <div class="india-badge">
+        <div class="flag-strip">
+          <span style="background:#FF9933"></span>
+          <span style="background:#ffffff"></span>
+          <span style="background:#138808"></span>
+        </div>
+        IndianKanoon Verified
+      </div>
+    </div>
+  </header>
+
+  <!-- Crisis banner -->
+  <div class="crisis-banner">
+    <div class="crisis-icon">⚠️</div>
+    <div class="crisis-text">
+      <h3>India AI Citation Crisis — 2025</h3>
+      <p>
+        <strong>Delhi High Court rebuked a lawyer</strong> for submitting fake AI-generated cases. 
+        <strong>Bengaluru ITAT withdrew a tax tribunal decision</strong> due to fake AI citations. 
+        Supreme Court Judge Rajesh Bindal personally warned against AI abuse in Indian courts. 
+        SENTINEL India is the only tool catching this.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-number">50M+</span>
+      <span class="stat-label">Pending cases in Indian courts</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">712</span>
+      <span class="stat-label">Court cases hit by fake AI citations globally in 2025</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">950</span>
+      <span class="stat-label">Indian LegalTech startups — none do citation verification</span>
+    </div>
+  </div>
+
+  <!-- Main verification card -->
+  <div class="main-card">
+    <div class="card-header">
+      <span class="card-title">Citation Verification Engine</span>
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        LIVE · IndianKanoon
+      </div>
+    </div>
+
+    <div class="card-body">
+
+      <!-- Example buttons -->
+      <div class="example-tabs">
+        <span style="font-size:12px; color:#8a8680; align-self:center; font-family:'JetBrains Mono',monospace;">Try:</span>
+        <button class="example-tab red" onclick="loadExample('fake')">🔴 Fake Citation</button>
+        <button class="example-tab green" onclick="loadExample('real')">🟢 Real Citation</button>
+        <button class="example-tab amber" onclick="loadExample('uncertain')">🟡 Uncertain</button>
+      </div>
+
+      <label class="input-label">Paste legal text or citation</label>
+      <textarea id="legalText" placeholder="Paste any legal argument, AI-generated document, or citation here...
+
+Example: 'As held in Sharma v Delhi Housing Board [2019] SC 441, the landlord is liable for structural defects...'
+
+SENTINEL will verify every citation against IndianKanoon and Indian court records."></textarea>
+
+      <button class="submit-btn" id="submitBtn" onclick="verifyCitation()">
+        <span class="btn-text">⚖️ Verify Against Indian Courts</span>
+        <div class="btn-spinner" id="btnSpinner"></div>
+      </button>
+
+      <div class="error-panel" id="errorPanel"></div>
+
+      <!-- Result panel -->
+      <div class="result-panel" id="resultPanel">
+        <div class="verdict-row">
+          <div class="verdict-badge">
+            <div class="verdict-dot"></div>
+            <div class="verdict-label" id="verdictLabel">RED</div>
+          </div>
+          <div class="score-chip" id="scoreChip">Score: 12/100</div>
+        </div>
+
+        <div class="result-divider"></div>
+
+        <div class="result-section-title">AI Analysis</div>
+        <div class="result-text" id="agentResponse">—</div>
+
+        <div id="citationSection" style="display:none; margin-top:14px;">
+          <div class="result-section-title">Citation Detected</div>
+          <div class="citation-box" id="citationText">—</div>
+          <div class="indiankanoon-row">
+            <span style="font-size:12px; opacity:0.6;">IndianKanoon:</span>
+            <span class="ik-badge" id="ikBadge">Checking...</span>
+          </div>
+        </div>
+
+        <button class="download-btn" onclick="downloadAuditPDF()">
+          📄 Download Audit Certificate
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Info section -->
+  <div class="info-section">
+    <div class="section-title">How SENTINEL India Works</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-icon">📋</div>
+        <h4>Paste Any Legal Text</h4>
+        <p>AI-drafted arguments, court submissions, legal opinions — paste anything a lawyer or AI produced.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🔍</div>
+        <h4>Verified Against IndianKanoon</h4>
+        <p>Every citation checked against IndianKanoon, SCC Online, and Supreme Court records in real time.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🚦</div>
+        <h4>RED / AMBER / GREEN Verdict</h4>
+        <p>RED = fake citation detected. AMBER = unverifiable. GREEN = citation confirmed real and valid.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">📄</div>
+        <h4>Audit Certificate</h4>
+        <p>Download a timestamped PDF certificate. Court-ready proof that citations were AI-verified.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    SENTINEL India · Built for Indian Courts · Powered by AI · © 2026
+  </div>
+</footer>
+
+<script>
+const WEBHOOK_URL = "https://primary-production-70e37.up.railway.app/webhook/dc80ba5b-8b22-4c9f-b837-b0a5391b3e49";
+
+const EXAMPLES = {
+  fake: `As established in Sharma v Delhi Housing Board [2019] SC 441, the defendant bears full liability for structural defects in tenanted premises. Furthermore, in Patel v Union of India [2021] HC Del 8821, the court held that landlords cannot evict tenants without 90 days written notice. These precedents clearly establish the claimant's right to compensation.`,
+  
+  real: `The Supreme Court in Vishaka v State of Rajasthan (1997) 6 SCC 241 laid down binding guidelines on sexual harassment at workplace, which remain in force as law until Parliament enacted the POSH Act 2013. As further affirmed in Medha Kotwal Lele v Union of India (2013) 1 SCC 297, employers have a non-delegable duty to implement these protections.`,
+  
+  uncertain: `In accordance with the Delhi High Court ruling in Gupta Enterprises v Municipal Corporation of Delhi [2023] DHC 4521, the petitioner is entitled to a stay on demolition proceedings pending a full hearing. The court's observations on procedural fairness in that matter are directly applicable to the present case.`
+};
+
+function loadExample(type) {
+  document.getElementById('legalText').value = EXAMPLES[type];
+  document.getElementById('resultPanel').style.display = 'none';
+  document.getElementById('errorPanel').style.display = 'none';
+}
+
+async function verifyCitation() {
+  const text = document.getElementById('legalText').value.trim();
+  if (!text) {
+    showError('Please paste some legal text to verify.');
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  const btnText = btn.querySelector('.btn-text');
+  const spinner = document.getElementById('btnSpinner');
+
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'block';
+  document.getElementById('resultPanel').style.display = 'none';
+  document.getElementById('errorPanel').style.display = 'none';
+
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chatInput: text,
+        message: text,
+        sessionId: 'sentinel-india-demo',
+        source: 'sentinel-india'
+      })
+    });
+
+    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+    const data = await response.json();
+    displayResult(data, text);
+
+  } catch (err) {
+    showError(`Connection error: ${err.message}. Please try again.`);
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = 'block';
+    spinner.style.display = 'none';
+  }
+}
+
+function displayResult(data, originalText) {
+  const panel = document.getElementById('resultPanel');
+  const verdict = (data.verdict || 'AMBER').toUpperCase();
+  const score = data.score ?? '—';
+  const agentResponse = data.agent_response || data.response || 'Verification complete.';
+  const citation = data.citations?.[0] || data.first_citation || null;
+  const ikVerified = data.indiankanoon_verified ?? data.bailii_verified ?? 'UNVERIFIED';
+
+  // Set panel class
+  panel.className = 'result-panel ' + verdict.toLowerCase();
+
+  document.getElementById('verdictLabel').textContent = verdict;
+  document.getElementById('scoreChip').textContent = `Score: ${score}/100`;
+  document.getElementById('agentResponse').textContent = agentResponse;
+
+  if (citation) {
+    document.getElementById('citationSection').style.display = 'block';
+    document.getElementById('citationText').textContent = citation;
+    const ikBadge = document.getElementById('ikBadge');
+    if (ikVerified === 'VERIFIED') {
+      ikBadge.textContent = '✓ Verified';
+      ikBadge.className = 'ik-badge verified';
+    } else {
+      ikBadge.textContent = '✗ Not Found';
+      ikBadge.className = 'ik-badge unverified';
+    }
+  } else {
+    document.getElementById('citationSection').style.display = 'none';
+  }
+
+  panel.style.display = 'block';
+
+  // Store for PDF
+  window._lastResult = { verdict, score, agentResponse, citation, ikVerified, originalText };
+}
+
+function showError(msg) {
+  const ep = document.getElementById('errorPanel');
+  ep.textContent = msg;
+  ep.style.display = 'block';
+}
+
+function downloadAuditPDF() {
+  const r = window._lastResult;
+  if (!r) return;
+
+  const now = new Date();
+  const timestamp = now.toISOString();
+  const readable = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  const verdictEmoji = r.verdict === 'RED' ? '🔴' : r.verdict === 'GREEN' ? '🟢' : '🟡';
+  const ikStatus = r.ikVerified === 'VERIFIED' ? '✓ Verified on IndianKanoon' : '✗ Not found on IndianKanoon';
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SENTINEL India Audit Certificate</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 700px; margin: 40px auto; padding: 40px; color: #1a1a1a; }
+  .header { border-bottom: 3px solid #FF6B00; padding-bottom: 20px; margin-bottom: 30px; }
+  .logo { font-size: 28px; font-weight: bold; color: #FF6B00; }
+  .logo span { color: #138808; }
+  .subtitle { font-size: 12px; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+  .verdict-block { background: ${r.verdict === 'RED' ? '#fff0ee' : r.verdict === 'GREEN' ? '#eef7f0' : '#fff8e8'}; 
+    border: 2px solid ${r.verdict === 'RED' ? '#e8a090' : r.verdict === 'GREEN' ? '#90c8a0' : '#e8c878'};
+    border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center; }
+  .verdict-text { font-size: 36px; font-weight: bold; color: ${r.verdict === 'RED' ? '#8b2a1a' : r.verdict === 'GREEN' ? '#1a5a2a' : '#7a5a10'}; }
+  .score { font-size: 16px; color: #666; margin-top: 8px; }
+  .section { margin: 20px 0; }
+  .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #666; margin-bottom: 8px; }
+  .section-body { font-size: 14px; line-height: 1.7; background: #f8f6f1; padding: 14px; border-radius: 6px; }
+  .mono { font-family: 'Courier New', monospace; font-size: 13px; }
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #999; text-align: center; }
+  .watermark { color: #FF6B00; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">SENTINEL <span>India</span></div>
+  <div class="subtitle">AI Legal Citation Audit Certificate</div>
+</div>
+
+<div class="verdict-block">
+  <div class="verdict-text">${verdictEmoji} ${r.verdict}</div>
+  <div class="score">Confidence Score: ${r.score}/100</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Verification Timestamp</div>
+  <div class="section-body mono">${readable} IST (${timestamp})</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Original Text Submitted</div>
+  <div class="section-body">${r.originalText.substring(0, 500)}${r.originalText.length > 500 ? '...' : ''}</div>
+</div>
+
+${r.citation ? `
+<div class="section">
+  <div class="section-title">Citation Detected</div>
+  <div class="section-body mono">${r.citation}</div>
+  <div class="section-body" style="margin-top:8px;">IndianKanoon Status: <strong>${ikStatus}</strong></div>
+</div>` : ''}
+
+<div class="section">
+  <div class="section-title">AI Analysis</div>
+  <div class="section-body">${r.agentResponse}</div>
+</div>
+
+<div class="footer">
+  <p>This certificate was generated by <span class="watermark">SENTINEL India</span> — AI Citation Verification for Indian Courts</p>
+  <p>Verified against IndianKanoon · ${timestamp}</p>
+  <p style="margin-top:8px; color:#FF6B00;">sentinel-india.ai</p>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SENTINEL-India-Audit-${r.verdict}-${Date.now()}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

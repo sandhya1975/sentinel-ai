@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL Legal — AI Citation Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0a0a0a; --white: #fafaf8; --gray-100: #f0ede8; --gray-300: #c8c4bc;
+    --gray-500: #8a8680; --gray-700: #4a4744;
+    --red-bg: #fdf0ee; --red-border: #e8a090; --red-text: #8b2a1a; --red-dot: #d94f35;
+    --amber-bg: #fdf6e8; --amber-border: #e8c878; --amber-text: #7a5a10; --amber-dot: #d4a020;
+    --green-bg: #eef7f0; --green-border: #88c898; --green-text: #1a6b30; --green-dot: #2e9e50;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--black); min-height: 100vh; overflow-x: hidden; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 2.5rem; border-bottom: 1px solid var(--gray-100); background: var(--white); position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; letter-spacing: 0.12em; color: var(--black); }
+  .logo span { color: var(--gray-500); font-weight: 400; }
+  .header-badge { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: var(--gray-500); border: 1px solid var(--gray-300); padding: 4px 12px; border-radius: 20px; }
+  .hero { padding: 5rem 2.5rem 3rem; max-width: 780px; margin: 0 auto; }
+  .hero-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--gray-500); margin-bottom: 1.25rem; text-transform: uppercase; }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.15; color: var(--black); margin-bottom: 1.25rem; font-weight: 400; }
+  .hero p { font-size: 16px; color: var(--gray-700); line-height: 1.7; max-width: 560px; margin-bottom: 2.5rem; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--gray-300); border: 1px solid var(--gray-300); border-radius: 12px; overflow: hidden; margin-bottom: 3rem; }
+  .stat { background: var(--white); padding: 1.25rem 1.5rem; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--black); line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: var(--gray-500); line-height: 1.4; }
+  .tool-wrap { max-width: 780px; margin: 0 auto; padding: 0 2.5rem 5rem; }
+  .tool-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--gray-500); text-transform: uppercase; margin-bottom: 1rem; }
+  .paste-area { width: 100%; min-height: 160px; padding: 1.25rem; font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--black); background: var(--gray-100); border: 1.5px solid var(--gray-300); border-radius: 10px; resize: vertical; outline: none; transition: border-color 0.2s; }
+  .paste-area:focus { border-color: var(--black); background: var(--white); }
+  .paste-area::placeholder { color: var(--gray-500); }
+  .examples-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .example-btn { font-size: 11px; font-family: 'DM Mono', monospace; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gray-300); background: transparent; color: var(--gray-700); cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; }
+  .example-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+  .check-btn { margin-top: 1rem; width: 100%; padding: 14px; background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.04em; border: none; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .loading { display: none; align-items: center; gap: 10px; padding: 1.5rem 0; color: var(--gray-500); font-size: 13px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--gray-300); border-top-color: var(--black); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .result { display: none; margin-top: 1.5rem; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .verdict-banner { border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; border: 1.5px solid; }
+  .verdict-banner.RED { background: var(--red-bg); border-color: var(--red-border); }
+  .verdict-banner.AMBER { background: var(--amber-bg); border-color: var(--amber-border); }
+  .verdict-banner.GREEN { background: var(--green-bg); border-color: var(--green-border); }
+  .verdict-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .verdict-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .RED .verdict-dot { background: var(--red-dot); }
+  .AMBER .verdict-dot { background: var(--amber-dot); }
+  .GREEN .verdict-dot { background: var(--green-dot); }
+  .verdict-label { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; letter-spacing: 0.1em; }
+  .RED .verdict-label { color: var(--red-text); }
+  .AMBER .verdict-label { color: var(--amber-text); }
+  .GREEN .verdict-label { color: var(--green-text); }
+  .verdict-score { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gray-500); }
+  .verdict-reason { font-size: 13px; line-height: 1.6; }
+  .RED .verdict-reason { color: var(--red-text); }
+  .AMBER .verdict-reason { color: var(--amber-text); }
+  .GREEN .verdict-reason { color: var(--green-text); }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .detail-card { background: var(--white); border: 1px solid var(--gray-300); border-radius: 8px; padding: 1rem; }
+  .detail-card-label { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--gray-500); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .detail-card-value { font-size: 14px; font-weight: 500; color: var(--black); }
+  .pdf-btn { width: 100%; padding: 13px; background: transparent; color: var(--black); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; border: 1.5px solid var(--black); border-radius: 10px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+  .pdf-btn:hover { background: var(--black); color: var(--white); }
+  .evidence-section { border-top: 1px solid var(--gray-100); padding: 3rem 2.5rem; max-width: 780px; margin: 0 auto; }
+  .evidence-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--gray-500); text-transform: uppercase; margin-bottom: 1.5rem; }
+  .evidence-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ev-card { border: 1px solid var(--gray-300); border-radius: 10px; padding: 1rem 1.25rem; }
+  .ev-tag { font-size: 10px; font-family: 'DM Mono', monospace; font-weight: 500; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 20px; display: inline-block; margin-bottom: 8px; text-transform: uppercase; }
+  .ev-tag.uk { background: #eeedfe; color: #3c3489; }
+  .ev-tag.india { background: #e1f5ee; color: #085041; }
+  .ev-tag.usa { background: #faeeda; color: #633806; }
+  .ev-tag.world { background: #faece7; color: #712b13; }
+  .ev-text { font-size: 12px; color: var(--gray-700); line-height: 1.6; font-style: italic; }
+  footer { border-top: 1px solid var(--gray-100); padding: 1.5rem 2.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .footer-logo { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gray-500); }
+  .footer-tagline { font-size: 12px; color: var(--gray-500); }
+  @media (max-width: 600px) {
+    header { padding: 1rem 1.25rem; }
+    .hero { padding: 3rem 1.25rem 2rem; }
+    .tool-wrap { padding: 0 1.25rem 3rem; }
+    .stats { grid-template-columns: 1fr; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .evidence-cards { grid-template-columns: 1fr; }
+    .evidence-section { padding: 2rem 1.25rem; }
+    footer { padding: 1rem 1.25rem; flex-direction: column; gap: 8px; text-align: center; }
+  }
+  .crisis-banner { background: #fff3cd; border-bottom: 1px solid #e8c878; color: #7a5a10; font-size: 13px; padding: 10px 2.5rem; text-align: center; }
+  .example-btn.red-btn { border-color: var(--red-border); color: var(--red-text); }
+  .example-btn.red-btn:hover { background: var(--red-dot); color: white; border-color: var(--red-dot); }
+  .example-btn.green-btn { border-color: var(--green-border); color: var(--green-text); }
+  .example-btn.green-btn:hover { background: var(--green-dot); color: white; border-color: var(--green-dot); }
+  .example-btn.amber-btn { border-color: var(--amber-border); color: var(--amber-text); }
+  .example-btn.amber-btn:hover { background: var(--amber-dot); color: white; border-color: var(--amber-dot); }
+  /* FLOATING CHATBOT */
+  .chat-widget { position: fixed; bottom: 24px; right: 24px; z-index: 1000; }
+  .chat-fab { width: 56px; height: 56px; border-radius: 50%; background: var(--black); color: var(--white); border: 3px solid #4a9eff; font-size: 22px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+  .chat-fab:hover { transform: scale(1.08); }
+  .chat-box { display: none; position: absolute; bottom: 68px; right: 0; width: 420px; background: var(--white); border: 1.5px solid var(--gray-300); border-radius: 18px; box-shadow: 0 12px 48px rgba(0,0,0,0.18); overflow: hidden; flex-direction: column; }
+  .chat-box.open { display: flex; }
+  .chat-header { background: var(--black); color: var(--white); padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+  .chat-header-icon { width: 36px; height: 36px; border-radius: 50%; background: #2a2a2a; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .chat-header-info { flex: 1; }
+  .chat-header-title { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; }
+  .chat-header-status { font-size: 11px; color: #88c898; margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+  .chat-header-status::before { content: '●'; font-size: 8px; }
+  .chat-close-btn { background: none; border: none; color: var(--white); font-size: 20px; cursor: pointer; opacity: 0.6; padding: 0; line-height: 1; }
+  .chat-close-btn:hover { opacity: 1; }
+  .chat-messages { flex: 1; padding: 16px; overflow-y: auto; min-height: 320px; max-height: 440px; display: flex; flex-direction: column; gap: 10px; }
+  .chat-msg { font-size: 14px; line-height: 1.6; padding: 10px 14px; border-radius: 12px; max-width: 92%; }
+  .chat-msg.bot { background: var(--gray-100); color: var(--black); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .chat-msg.user { background: var(--black); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+  /* verdict block inside chat */
+  .chat-verdict { align-self: flex-start; max-width: 92%; border-radius: 12px; border: 1.5px solid; padding: 12px 14px; }
+  .chat-verdict.RED { background: var(--red-bg); border-color: var(--red-border); }
+  .chat-verdict.AMBER { background: var(--amber-bg); border-color: var(--amber-border); }
+  .chat-verdict.GREEN { background: var(--green-bg); border-color: var(--green-border); }
+  .chat-verdict-title { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .chat-verdict.RED .chat-verdict-title { color: var(--red-text); }
+  .chat-verdict.AMBER .chat-verdict-title { color: var(--amber-text); }
+  .chat-verdict.GREEN .chat-verdict-title { color: var(--green-text); }
+  .cite-line { display: flex; align-items: center; gap: 8px; font-family: 'DM Mono', monospace; font-size: 12px; padding: 5px 0; }
+  .cite-line .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cite-line .dot.GREEN { background: var(--green-dot); }
+  .cite-line .dot.RED { background: var(--red-dot); }
+  .cite-line .dot.AMBER { background: var(--amber-dot); }
+  .cite-line .tag { margin-left: auto; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 12px; }
+  .cite-line .tag.GREEN { background: #d6efdd; color: var(--green-text); }
+  .cite-line .tag.RED { background: #f8dcd5; color: var(--red-text); }
+  .cite-line .tag.AMBER { background: #f8ecc9; color: var(--amber-text); }
+  .cite-line .fake { text-decoration: line-through; opacity: 0.7; }
+  .verified-answer { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--gray-300); font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.6; color: var(--black); }
+  .verified-answer b { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: var(--green-text); display: block; margin-bottom: 4px; }
+  .chat-suggestions { padding: 4px 16px 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chat-suggestion { font-size: 12px; font-family: 'DM Mono', monospace; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gray-300); background: transparent; color: var(--gray-700); cursor: pointer; transition: all 0.15s; }
+  .chat-suggestion:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+  .chat-input-row { display: flex; border-top: 1px solid var(--gray-100); }
+  .chat-input { flex: 1; border: none; padding: 13px 16px; font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; background: var(--white); }
+  .chat-send { background: var(--black); color: var(--white); border: none; padding: 0 20px; cursor: pointer; font-size: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">SENTINEL <span>LEGAL</span></div>
+  <div class="header-badge">Legal — Demo</div>
+</header>
+<div class="crisis-banner">
+  ⚠️ <strong>UK Crisis Alert:</strong> The High Court of England and Wales warned lawyers against AI-generated case citations — June 2025
+</div>
+<section class="hero">
+  <div class="hero-label">AI Citation Verification</div>
+  <h1>Ask a legal question. Get an answer that checks itself.</h1>
+  <p>Most legal AIs invent cases. SENTINEL is different: it writes the answer, then verifies every citation against real UK law reports — showing you which cases are real (GREEN) and which are fake (RED) before you rely on them. Ask it anything using the chat, bottom-right.</p>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">1,598</div>
+      <div class="stat-label">global court cases hit by fake AI citations (June 2026)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">24%</div>
+      <div class="stat-label">of AI legal answers cite law that doesn't back them</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">£80k+</div>
+      <div class="stat-label">largest single fine for fake citations</div>
+    </div>
+  </div>
+</section>
+<div class="tool-wrap">
+  <div class="tool-label">Or paste existing legal text to verify</div>
+  <textarea class="paste-area" id="inputText" placeholder="Paste your AI-generated legal text here. For example: 'The defendant had a duty of care — see Smith v Jones [2019] EWCA Civ 123. The court held that...'"></textarea>
+  <div class="examples-row">
+    <button class="example-btn red-btn" onclick="loadExample('sharma')">🔴 Sharma v Delhi Housing Board</button>
+    <button class="example-btn red-btn" onclick="loadExample('harrison')">🔴 Harrison v Tesco Stores</button>
+    <button class="example-btn green-btn" onclick="loadExample('donoghue')">🟢 Donoghue v Stevenson</button>
+    <button class="example-btn green-btn" onclick="loadExample('wilsons')">🟢 Wilsons and Clyde Coal</button>
+    <button class="example-btn" onclick="clearAll()">Clear</button>
+  </div>
+  <button class="check-btn" id="checkBtn" onclick="runCheck()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    Check with SENTINEL
+  </button>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>SENTINEL is analysing your text...</span>
+  </div>
+  <div class="result" id="result">
+    <div class="verdict-banner" id="verdictBanner">
+      <div class="verdict-top">
+        <div class="verdict-dot"></div>
+        <div class="verdict-label" id="verdictLabel"></div>
+        <div class="verdict-score" id="verdictScore"></div>
+      </div>
+      <div class="verdict-reason" id="verdictReason"></div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card-label">Citation found</div>
+        <div class="detail-card-value" id="citationFound">—</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">Archive status</div>
+        <div class="detail-card-value" id="bailiiStatus">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="evidence-section">
+  <div class="evidence-label">Why this matters — verified evidence</div>
+  <div class="evidence-cards">
+    <div class="ev-card">
+      <span class="ev-tag world">Global — June 2026</span>
+      <p class="ev-text">1,598 court cases worldwide have involved AI-fabricated citations, up from around 200 a year earlier — roughly 8 new cases every day. — Damien Charlotin AI Hallucination database</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-tag usa">USA — Oregon</span>
+      <p class="ev-text">Counsel in one winery dispute filed 15 fake citations and 8 fabricated quotes, drawing roughly £80,000+ in combined penalties — the largest aggregate yet. — ABA Journal</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-tag usa">USA — K&amp;L Gates</span>
+      <p class="ev-text">Two major firms were fined about $31,000 after 9 of 27 citations were wrong and at least two cases did not exist. The judge said AI use "affirmatively misled" the court. — ABA Journal</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-tag uk">Frontier models</span>
+      <p class="ev-text">Around 24% of frontier-model legal answers cite law that does not actually support the point being made. — HAQQ legal AI audit, 2026</p>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-logo">SENTINEL LEGAL</div>
+  <div class="footer-tagline">The only legal AI that fact-checks its own citations.</div>
+</footer>
+
+<script>
+/* ===== PASTE-TO-VERIFY (old engine, unchanged) ===== */
+const WEBHOOK_URL = "https://primary-production-70e37.up.railway.app/webhook/0a5442eb-1269-4137-b4bf-6b540f867cd9";
+const EXAMPLES = {
+  sharma: "The tenant has a right to safe housing under the Landlord and Tenant Act 1985. See Sharma v Delhi Housing Board [2019] EWCA Civ 441 — the court ruled the landlord was fully liable for structural defects.",
+  harrison: "The retailer owed a duty of care to its customers under established negligence principles. See Harrison v Tesco Stores Ltd [2021] EWCA Civ 983 — the Court of Appeal upheld the claimant's right to compensation.",
+  donoghue: "The manufacturer owed a duty of care to the ultimate consumer. See Donoghue v Stevenson [1932] AC 562 — the House of Lords established the modern law of negligence.",
+  wilsons: "Employers have a non-delegable duty to provide safe working conditions. See Wilsons and Clyde Coal Co v English [1938] AC 57 — the House of Lords confirmed this duty cannot be delegated."
+};
+function loadExample(type) {
+  document.getElementById('inputText').value = EXAMPLES[type] || EXAMPLES.sharma;
+  document.getElementById('result').style.display = 'none';
+}
+function clearAll() {
+  document.getElementById('inputText').value = '';
+  document.getElementById('result').style.display = 'none';
+}
+async function runCheck() {
+  const text = document.getElementById('inputText').value.trim();
+  if (!text) { alert('Please paste some legal text first.'); return; }
+  document.getElementById('checkBtn').disabled = true;
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('result').style.display = 'none';
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chatInput: text })
+    });
+    const data = await response.json();
+    showResult(data);
+  } catch (err) {
+    alert('Connection error. Please check your internet and try again.');
+  } finally {
+    document.getElementById('checkBtn').disabled = false;
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+function showResult(data) {
+  const verdict = data.verdict || 'AMBER';
+  const score = data.score || 0;
+  const reason = data.block_reason || defReason(verdict);
+  const citations = data.citations || [];
+  const bailiiVerified = data.bailii_verified || 'UNVERIFIED';
+  const banner = document.getElementById('verdictBanner');
+  banner.className = 'verdict-banner ' + verdict;
+  const m = { RED: 'RED — Hallucinated citation detected', AMBER: 'AMBER — Requires human review', GREEN: 'GREEN — Verified. Safe to submit.' };
+  document.getElementById('verdictLabel').textContent = m[verdict] || verdict;
+  document.getElementById('verdictScore').textContent = 'Score: ' + score + '/100';
+  document.getElementById('verdictReason').textContent = reason;
+  document.getElementById('citationFound').textContent = citations.length > 0 ? citations[0].raw : 'None detected';
+  document.getElementById('bailiiStatus').textContent = bailiiVerified;
+  document.getElementById('result').style.display = 'block';
+}
+function defReason(v) {
+  if (v === 'RED') return 'Citation could not be found in the public record. Do not submit.';
+  if (v === 'AMBER') return 'Citation could not be independently verified. Human review required.';
+  return 'Citation verified. No hallucination risk detected.';
+}
+</script>
+
+<!-- FLOATING CHATBOT — now the GENERATE + VERIFY engine -->
+<div class="chat-widget">
+  <div class="chat-box open" id="chatBox">
+    <div class="chat-header">
+      <div class="chat-header-icon">⚖️</div>
+      <div class="chat-header-info">
+        <div class="chat-header-title">SENTINEL Legal AI</div>
+        <div class="chat-header-status">Online · Answers &amp; verifies itself</div>
+      </div>
+      <button class="chat-close-btn" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">Ask me any UK legal question. I write the answer, then check every case I cite against the National Archives — and show you which are real and which are fake.</div>
+    </div>
+    <div class="chat-suggestions" id="chatSuggestions">
+      <button class="chat-suggestion" onclick="askSuggestion('What are the elements of negligence in UK law? Cite the leading cases.')">Negligence elements</button>
+      <button class="chat-suggestion" onclick="askSuggestion('Give me the leading UK case law on murder and the test for intention.')">Murder &amp; intention</button>
+      <button class="chat-suggestion" onclick="askSuggestion('Explain UK contract law citing Sharma v Delhi [2019] UKSC 99.')">Try a fake case</button>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" placeholder="Ask a UK legal question..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">→</button>
+    </div>
+  </div>
+  <button class="chat-fab" onclick="toggleChat()">⚖️</button>
+</div>
+<script>
+/* ===== CHAT = GENERATE + VERIFY engine ===== */
+const GENERATE_WEBHOOK = "https://primary-production-70e37.up.railway.app/webhook/sentinel-generate";
+function toggleChat() { document.getElementById('chatBox').classList.toggle('open'); }
+function askSuggestion(text) {
+  document.getElementById('chatSuggestions').style.display = 'none';
+  document.getElementById('chatInput').value = text;
+  sendChat();
+}
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  const msgs = document.getElementById('chatMessages');
+  msgs.innerHTML += `<div class="chat-msg user">${esc(msg)}</div>`;
+  msgs.innerHTML += `<div class="chat-msg bot" id="typing">Writing the answer and verifying every citation…</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  try {
+    const res = await fetch(GENERATE_WEBHOOK, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chatInput: msg })
+    });
+    const data = await res.json();
+    document.getElementById('typing').remove();
+    renderVerified(data, msgs);
+  } catch(e) {
+    document.getElementById('typing').textContent = 'Sorry, connection error.';
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function renderVerified(data, msgs) {
+  const answer = (data.answer || 'No answer returned.').replace(/\\n/g, '\n');
+  const cites = data.citations_checked || [];
+  const overall = (data.overall_verdict || 'AMBER').toUpperCase();
+
+  // 1) raw answer bubble (shows citations as written, incl. fakes)
+  msgs.innerHTML += `<div class="chat-msg bot">${esc(answer).replace(/\n/g,'<br>')}</div>`;
+
+  // 2) verdict + per-citation GREEN/RED (the "wow" — SENTINEL catches fakes)
+  let rows = '';
+  cites.forEach(c => {
+    const v = (c.verdict || 'AMBER').toUpperCase();
+    const isFake = v === 'RED';
+    rows += `<div class="cite-line">
+        <span class="dot ${v}"></span>
+        <span class="${isFake?'fake':''}">${esc(c.citation||'—')}</span>
+        <span class="tag ${v}">${isFake?'FAKE — caught':v}</span>
+      </div>`;
+  });
+  if (!rows) rows = '<div class="cite-line"><span>No case citations detected.</span></div>';
+
+  const titleMap = {
+    GREEN: '✓ All citations verified real',
+    AMBER: '⚠ Some citations unverified',
+    RED: '✗ SENTINEL caught a fake citation'
+  };
+
+  // 3) clean verified-only answer (RED removed)
+  const greenCites = cites.filter(c => (c.verdict||'').toUpperCase()==='GREEN').map(c=>c.citation);
+  let verifiedBlock = '';
+  if (overall === 'RED' || cites.some(c=>(c.verdict||'').toUpperCase()!=='GREEN')) {
+    verifiedBlock = `<div class="verified-answer"><b>Safe to rely on — verified citations only</b>${
+      greenCites.length ? greenCites.map(esc).join(', ') : 'None of the cited cases could be verified. Do not rely on this answer.'
+    }</div>`;
+  }
+
+  msgs.innerHTML += `<div class="chat-verdict ${overall}">
+      <div class="chat-verdict-title">${titleMap[overall]||overall}</div>
+      ${rows}
+      ${verifiedBlock}
+    </div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>
